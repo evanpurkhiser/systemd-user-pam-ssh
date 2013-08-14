@@ -33,4 +33,4 @@ To enable the script you will want to add this to your pam configuration
 
 I would recomend placing the script under `/usr/lib/systemd/`. If you are using
 Arch Linux you can use the PKGBUILD [located
-here](https://github.com/EvanPurkhiser/PKGBUILDs/tree/master/systemd-user-pam-ssh-git)
+here](https://github.com/EvanPurkhiser/PKGBUILDs/tree/master/systemd-user-pam-ssh-git/PKGBUILD)
