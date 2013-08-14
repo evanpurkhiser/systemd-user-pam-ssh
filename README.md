@@ -5,6 +5,9 @@ then this script might just be for you!
 
  * You use systemd as a user session manager (either
    [this](https://github.com/sofar/user-session-units), or [this](https://github.com/EvanPurkhiser/systemd-user-sessions))
+ * You're systemd --user instance default target doesn't start a graphical
+   environment, i.e. you still need to login to activate your graphical
+   session
  * You have a `systemd --user` service called `ssh-agent.service` that starts
    your ssh agent.
  * You have to type your password a second time after logging in in order to
