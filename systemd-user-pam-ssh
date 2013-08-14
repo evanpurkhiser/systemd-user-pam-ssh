@@ -1,0 +1,30 @@
+#!/bin/sh
+# For use with pam_exec.so
+#
+#   auth  optional  pam_exec.so  expose_authtok  /usr/lib/systemd/systemd-user-pam-ssh
+#
+# Takes a password from STDIN, starts the ssh-agent as a systemd user service,
+# and decrypts the ssh key using the provided password, adding it to the agent.
+
+# Handle inital checks as root
+if [ $(id -u) = 0 ]
+then
+	# Don't execute if the user-session isn't running
+	systemctl -q is-active user-session@${PAM_USER} || exit 0
+
+	# Re-execute this script as the user to add their key (while piping STDIN)
+	cat | exec su ${PAM_USER} -c $(realpath ${BASH_SOURCE[0]})
+
+# Handle adding the key as the user
+else
+	# We need to specify the XDG_RUNTIME_DIR because pam_systemd won't have run
+	export XDG_RUNTIME_DIR=/run/user/$(id -u)
+
+	# Get the SSH_AUTH_SOCK variable from the user session
+	export $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
+
+	# Ensure the ssh-agent service is started
+	systemctl --user start ssh-agent
+
+	ssh-add
+fi
