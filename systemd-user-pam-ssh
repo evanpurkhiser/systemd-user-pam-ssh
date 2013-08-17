@@ -21,7 +21,7 @@ else
 	export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
 	# Get the SSH_AUTH_SOCK variable from the user session
-	export $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
+	export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
 
 	# Ensure the ssh-agent service is started
 	systemctl --user start ssh-agent
