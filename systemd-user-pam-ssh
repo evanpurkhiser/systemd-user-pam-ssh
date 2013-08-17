@@ -27,4 +27,5 @@ else
 	systemctl --user start ssh-agent
 
 	ssh-add
+	exit 0
 fi
