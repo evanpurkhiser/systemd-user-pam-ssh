@@ -9,8 +9,8 @@
 # Handle inital checks as root
 if [ $(id -u) = 0 ]
 then
-	# Don't execute if the user-session isn't running
-	systemctl -q is-active user-session@${PAM_USER} || exit 0
+	# Don't execute if the systemd --user instance isn't running
+	systemctl -q is-active user@$(id -u ${PAM_USER}) || exit 0
 
 	# Re-execute this script as the user to add their key (while piping STDIN)
 	cat | exec su ${PAM_USER} -c $(realpath ${BASH_SOURCE[0]})
