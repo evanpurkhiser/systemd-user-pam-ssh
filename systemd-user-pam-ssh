@@ -13,19 +13,31 @@ then
 	systemctl -q is-active user@$(id -u ${PAM_USER}) || exit 0
 
 	# Re-execute this script as the user to add their key (while piping STDIN)
-	cat | exec su ${PAM_USER} -c $(realpath ${BASH_SOURCE[0]})
+	cat | exec su ${PAM_USER} -c "$0 initialize"
 
 # Handle adding the key as the user
 else
-	# We need to specify the XDG_RUNTIME_DIR because pam_systemd won't have run
-	export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
-	# Get the SSH_AUTH_SOCK variable from the user session
-	export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
+  # Add key
+  if [ "$1" = "initialize" ]; then
+		# We need to specify the XDG_RUNTIME_DIR because pam_systemd won't have run
+		export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
-	# Ensure the ssh-agent service is started
-	systemctl --user start ssh-agent
+		# Get the SSH_AUTH_SOCK variable from the user session
+		export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
 
-	ssh-add
-	exit 0
+
+		# Ensure the ssh-agent service is started
+		systemctl --user start ssh-agent
+
+		# Newer ssh-add won't read passphrase from stdin but will pipe it to askpass
+		export SSH_ASKPASS="$0"
+		cat | ssh-add
+		exit 0
+	
+	# Double as askpass 
+	else
+		cat
+    exit 0
+	fi
 fi
