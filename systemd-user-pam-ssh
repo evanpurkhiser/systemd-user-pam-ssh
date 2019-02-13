@@ -18,26 +18,46 @@ then
 # Handle adding the key as the user
 else
 
-  # Add key
-  if [ "$1" = "initialize" ]; then
+	if [ "$1" = "initialize" ]; then
 		# We need to specify the XDG_RUNTIME_DIR because pam_systemd won't have run
 		export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
 		# Get the SSH_AUTH_SOCK variable from the user session
 		export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
 
+		# Use self as askpass to work around ssh-add not reading stdin
+		# on some systems
 
 		# Ensure the ssh-agent service is started
 		systemctl --user start ssh-agent
 
-		# Newer ssh-add won't read passphrase from stdin but will pipe it to askpass
+		# specify self to ask for password
 		export SSH_ASKPASS="$0"
+
+		#Fake display to coax to actually use SSH_ASKPASS
+		export DISPLAY=nodisplay
+
 		cat | ssh-add
 		exit 0
 	
-	# Double as askpass 
+	# Double as SSH_ASKPASS 
 	else
-		cat
-    exit 0
+		# Fetch home dir
+		export $(systemctl --user show-environment | grep ^HOME=)
+
+		# Decrypt passhrase if file exists
+		FILE="$HOME/.ssh/passphrase"
+		if [ -e "$FILE" ]; then
+			# to use a different passphrase, prepare file with
+			# read -s PASSWORD
+			# openssl enc -pbkdf2 -in - -out ~/.ssh/passphrase -e -aes256 -k
+			read PASSWORD
+			openssl enc -pbkdf2 -in "$FILE" -out - -d -aes256 -k "$PASSWORD"
+
+		# Use password as passphrase
+		else
+			cat
+		fi
+		exit 0
 	fi
 fi
