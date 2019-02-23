@@ -25,26 +25,21 @@ else
 		# Get the SSH_AUTH_SOCK variable from the user session
 		export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
 
-		# Use self as askpass to work around ssh-add not reading stdin
-		# on some systems
-
 		# Ensure the ssh-agent service is started
 		systemctl --user start ssh-agent
 
-		# specify self to ask for password
+		# Use self as askpass to work around ssh-add not reading stdin
+		# on some systems
 		export SSH_ASKPASS="$0"
 
 		#Fake display to coax to actually use SSH_ASKPASS
 		export DISPLAY=nodisplay
 
-		cat | ssh-add
+		ssh-add
 		exit 0
-	
+
 	# Double as SSH_ASKPASS 
 	else
-		# Fetch home dir
-		export $(systemctl --user show-environment | grep ^HOME=)
-
 		# Decrypt passhrase if file exists
 		FILE="$HOME/.ssh/passphrase"
 		if [ -e "$FILE" ]; then
