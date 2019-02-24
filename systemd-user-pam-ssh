@@ -25,9 +25,6 @@ else
 		# Get the SSH_AUTH_SOCK variable from the user session
 		export $(systemctl --user show-environment | grep ^SSH_AUTH_SOCK=)
 
-		# Ensure the ssh-agent service is started
-		systemctl --user start ssh-agent
-
 		# Use self as askpass to work around ssh-add not reading stdin
 		# on some systems
 		export SSH_ASKPASS="$0"
