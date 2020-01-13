@@ -77,4 +77,5 @@ SSH key will be decrypted and added to your ssh-agent for you.
     unset PASSWORD
     unset PASSPHRASE
 
-
+---
+** This is an extended version of the [original script by EvanPurkhiser](https://github.com/EvanPurkhiser/systemd-user-pam-ssh) **
