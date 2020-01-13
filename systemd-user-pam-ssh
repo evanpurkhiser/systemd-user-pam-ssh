@@ -48,6 +48,9 @@ else
 			# openssl enc -pbkdf2 -in - -out ~/.ssh/passphrase -e -aes256 -k
 			read PASSWORD
 			openssl enc -pbkdf2 -in "$FILE" -out - -d -aes256 -k "$PASSWORD"
+			if [ $? -ne 0 ]; then
+				exit 1
+			fi
 
 		# Use password as passphrase
 		else
