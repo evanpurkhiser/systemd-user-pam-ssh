@@ -3,12 +3,12 @@
 This script has a rather specific use case. If you fit the following demographic
 then this script might just be for you!
 
- * You use systemd
- * You login at the linux VT using a getty
- * You have a `systemd --user` service called `ssh-agent.service` that starts
-   your ssh agent.
- * You have to type your password a second time after logging in in order to
-   decrypt your SSH key.
+- You use systemd
+- You login at the linux VT using a getty
+- You have a `systemd --user` service called `ssh-agent.service` that starts
+  your ssh agent.
+- You have to type your password a second time after logging in in order to
+  decrypt your SSH key.
 
 This script allows you to only type your password once. When logging in, your
 SSH key will be decrypted and added to your ssh-agent for you.
@@ -31,4 +31,4 @@ To enable the script you will want to add this to your pam configuration
 
 I would recommend placing the script under `/usr/lib/systemd/`. If you are using
 Arch Linux you can use the PKGBUILD [located
-here](https://github.com/EvanPurkhiser/PKGBUILDs/tree/master/systemd-user-pam-ssh-git/PKGBUILD).
+here](https://github.com/EvanPurkhiser/PKGBUILDs/tree/main/systemd-user-pam-ssh-git/PKGBUILD).
